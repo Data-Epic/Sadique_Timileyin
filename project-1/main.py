@@ -14,19 +14,17 @@ sh = gc.open("project 1202")
 
 worksheet = sh.sheet1
 
-print(worksheet.acell("A2").value)
-
 # Formatting first column
-# worksheet.format("A1:B1", {'textFormat': {'bold': True}})
-# worksheet.update('A1', 'Name')
-# worksheet.update('B1', 'Recipe Link')
+worksheet.format("A1:B1", {'textFormat': {'bold': True}})
+worksheet.update('A1', 'Name')
+worksheet.update('B1', 'Recipe Link')
 
 
 # UN-comment this section  to use the manual updating
-# names = driver.find_elements(By.TAG_NAME, value='h2')
-# meals = []
-# for name in names:
-#     meals.append(name.text)
+names = driver.find_elements(By.TAG_NAME, value='h2')
+meals = []
+for name in names:
+    meals.append(name.text)
 
 
 links = driver.find_elements(By.CSS_SELECTOR, value='h2 a')
@@ -35,14 +33,14 @@ for link in links:
     recipe.append(link.get_attribute('href'))
 
 # manual updating
-# worksheet.update("A2:B22",
-#                  [[meals[0], recipe[0]], [meals[1], recipe[1]], [meals[2], recipe[2]],
-#                   [meals[3], recipe[3]], [meals[4], recipe[4]], [meals[5], recipe[5]],
-#                   [meals[6], recipe[6]], [meals[7], recipe[7]], [meals[8], recipe[8]],
-#                   [meals[9], recipe[9]], [meals[10], recipe[10]], [meals[11], recipe[11]],
-#                   [meals[12], recipe[12]], [meals[13], recipe[13]], [meals[14], recipe[14]],
-#                   [meals[15], recipe[15]], [meals[16], recipe[16]], [meals[17], recipe[17]],
-#                   [meals[18], recipe[18]], [meals[19], recipe[19]], [meals[20], recipe[20]]])
+worksheet.update("A2:B22",
+                 [[meals[0], recipe[0]], [meals[1], recipe[1]], [meals[2], recipe[2]],
+                  [meals[3], recipe[3]], [meals[4], recipe[4]], [meals[5], recipe[5]],
+                  [meals[6], recipe[6]], [meals[7], recipe[7]], [meals[8], recipe[8]],
+                  [meals[9], recipe[9]], [meals[10], recipe[10]], [meals[11], recipe[11]],
+                  [meals[12], recipe[12]], [meals[13], recipe[13]], [meals[14], recipe[14]],
+                  [meals[15], recipe[15]], [meals[16], recipe[16]], [meals[17], recipe[17]],
+                  [meals[18], recipe[18]], [meals[19], recipe[19]], [meals[20], recipe[20]]])
 
 # # Automated updating
 num = 1
@@ -51,7 +49,6 @@ for linked in recipe:
     num += 1
     recipe_link = linked
     worksheet.update(f'B{num}', recipe_link)
-    print(recipe_link)
+
     meal = driver.find_element(By.TAG_NAME, value="h1").text
     worksheet.update(f'A{num}', meal)
-    print(meal)
