@@ -1,3 +1,4 @@
+import logging
 import gspread
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -52,3 +53,4 @@ for linked in recipe:
 
     meal = driver.find_element(By.TAG_NAME, value="h1").text
     worksheet.update(f'A{num}', meal)
+    logging.info("Stored")
