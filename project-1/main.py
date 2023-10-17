@@ -8,7 +8,7 @@ driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())
 link = "https://www.food.com/ideas/top-comfort-food-recipes-6929#c-791290"
 driver.get(url=link)
 
-gc = gspread.service_account(filename='my-project-1202.json')
+gc = gspread.service_account(filename='../../../gspread/project 1/my-project-1202.json')
 
 sh = gc.open("project 1202")
 
