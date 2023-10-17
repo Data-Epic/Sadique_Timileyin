@@ -50,7 +50,7 @@ for linked in recipe:
     num += 1
     recipe_link = linked
     worksheet.update(f'B{num}', recipe_link)
-
+    logging.info("Worksheet updated")
     meal = driver.find_element(By.TAG_NAME, value="h1").text
     worksheet.update(f'A{num}', meal)
-    logging.info("Stored")
+    logging.info("Worksheet updated")
