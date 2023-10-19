@@ -1,2 +1,2 @@
-.env
-my-project-1202.json
+*.env
+my-project.json
