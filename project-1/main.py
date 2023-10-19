@@ -8,7 +8,7 @@ import os, json
 from dotenv import load_dotenv, find_dotenv
 load_dotenv()
 KEY = json.loads(os.getenv("PROJECT_1202"))
-
+ 
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 link = "https://www.food.com/ideas/top-comfort-food-recipes-6929#c-791290"
@@ -23,15 +23,7 @@ def open_spreadsheet(sheet_name):
     """
     sh = gc.open(sheet_name)
     logging.info("spreadsheet opened")
-
-    def select_spreadsheet(s_name):
-        """
-        This function  selects the preferred worksheet
-        :param s_name: This is the name of the desired worksheet in str format
-        """
-        worksheet = sh.worksheet(s_name)
-        return worksheet
-    return select_spreadsheet
+    return sh
 
 
 def create_spreadsheet(sheet_name):
@@ -40,15 +32,18 @@ def create_spreadsheet(sheet_name):
     """
     sh = gc.create(sheet_name)
     logging.info("Spreadsheet created")
+    return sh
 
-    def select_spreadsheet(s_name):
-        """
-        This function  selects the preferred worksheet
-        :param s_name: This is the name of the desired worksheet in str format
-        """
-        worksheet = sh.worksheet(s_name)
-        return worksheet
-    return select_spreadsheet
+
+def select_spreadsheet(filename, s_name):
+    """
+    This function  selects the preferred worksheet
+    :param filename:
+    :param s_name: This is the name of the desired worksheet in str format
+    """
+    worksheets = open_spreadsheet(filename).worksheet(s_name)
+    return worksheets
+
 
 
 def spreadsheet_format(worksheet, col1, col2):
@@ -59,6 +54,19 @@ def spreadsheet_format(worksheet, col1, col2):
     :param col2: This is the name of the end column in the range in str format
     """
     worksheet.format(f"{col1}:{col2}", {'textFormat': {'bold': True}})
+
+
+def new_worksheet(filename, new_name, rows, cols):
+    """
+    This function creates a new worksheet within the spreadsheet.
+    :param filename: This is the name of the spreadsheet file
+    :param new_name: Name of  the new worksheet
+    :param rows: Numbers of desired rows
+    :param cols: Numbers of desired columns
+    :return: A new worksheet
+    """
+    open_spreadsheet(filename).add_worksheet(new_name, rows, cols)
+    logging.info("Worksheet created")
 
 
 # This section provides the names of the meals
@@ -73,13 +81,13 @@ recipe = []
 for link in links:
     recipe.append(link.get_attribute('href'))
 
-spreadsheet = open_spreadsheet("project 1202")
-spreadsheet("sheet1")
-spreadsheet_format(spreadsheet("sheet1"), "A1", "B1")
-spreadsheet("sheet1").update("A1", "Name")
-spreadsheet("sheet1").update("B1", "Recipe")
+open_spreadsheet("project 1202")
+worksheet = select_spreadsheet(filename="project 1202", s_name="sheet1")
+spreadsheet_format(worksheet, "A1", "B1")
+worksheet.update("A1", "Name")
+worksheet.update("B1", "Recipe")
 # manual updating
-spreadsheet("sheet1").update("A2:B22",
+worksheet.update("A2:B22",
                              [[meals[0], recipe[0]], [meals[1], recipe[1]], [meals[2], recipe[2]],
                               [meals[3], recipe[3]], [meals[4], recipe[4]], [meals[5], recipe[5]],
                               [meals[6], recipe[6]], [meals[7], recipe[7]], [meals[8], recipe[8]],
@@ -94,8 +102,8 @@ for linked in recipe:
     driver.get(linked)
     num += 1
     recipe_link = linked
-    spreadsheet("sheet1").update(f'B{num}', recipe_link)
+    worksheet.update(f'B{num}', recipe_link)
     logging.info("Worksheet updated")
     meal = driver.find_element(By.TAG_NAME, value="h1").text
-    spreadsheet("sheet1").update(f'A{num}', meal)
+    worksheet.update(f'A{num}', meal)
     logging.info("Worksheet updated")
