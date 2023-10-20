@@ -5,16 +5,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import os, json
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 load_dotenv()
-KEY = json.loads(os.getenv("PROJECT_1202"))
- 
+KEY = os.getenv("PROJECT_1202")
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 link = "https://www.food.com/ideas/top-comfort-food-recipes-6929#c-791290"
 driver.get(url=link)
 
-gc = gspread.service_account(KEY)
+gc = gspread.service_account("sadique_timileyin/project-1/my-project.json")
 
 
 def open_spreadsheet(sheet_name):
