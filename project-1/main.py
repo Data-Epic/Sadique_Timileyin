@@ -46,14 +46,14 @@ def select_spreadsheet(filename, s_name):
     return worksheets
 
 
-def spreadsheet_format(worksheet, col1, col2):
+def spreadsheet_format(worksheets, col1, col2):
     """
     This functon is for the formatting of the spreadsheet
-    :param worksheet: This  accepts a function
+    :param worksheets: This  accepts a function
     :param col1: This is the name of the start column in the range in str format
     :param col2: This is the name of the end column in the range in str format
     """
-    worksheet.format(f"{col1}:{col2}", {'textFormat': {'bold': True}})
+    worksheets.format(f"{col1}:{col2}", {'textFormat': {'bold': True}})
 
 
 def new_worksheet(filename, new_name, rows, cols):
