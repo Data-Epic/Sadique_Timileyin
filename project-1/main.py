@@ -4,13 +4,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import NoSuchElementException
 import os, json
 from dotenv import load_dotenv
 load_dotenv()
 KEY = os.getenv("PROJECT_1202")
-
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-link = "https://www.food.com/ideas/top-comfort-food-recipes-6929#c-791290"
+option = webdriver.ChromeOptions()
+option.add_argument('--headless')
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=option)
+link = "https://www.lusha.com/company-search/accounting/10/canada/193/page/2/"
 driver.get(url=link)
 
 gc = gspread.service_account("sadique_timileyin/project-1/my-project.json")
@@ -44,7 +46,6 @@ def select_spreadsheet(filename, s_name):
     return worksheets
 
 
-
 def spreadsheet_format(worksheet, col1, col2):
     """
     This functon is for the formatting of the spreadsheet
@@ -68,41 +69,50 @@ def new_worksheet(filename, new_name, rows, cols):
     logging.info("Worksheet created")
 
 
-# This section provides the names of the meals
-names = driver.find_elements(By.TAG_NAME, value='h2')
-meals = []
-for name in names:
-    meals.append(name.text)
-
-# This section provides the links to the recipe
-links = driver.find_elements(By.CSS_SELECTOR, value='h2 a')
-recipe = []
-for link in links:
-    recipe.append(link.get_attribute('href'))
-
 open_spreadsheet("project 1202")
-worksheet = select_spreadsheet(filename="project 1202", s_name="sheet1")
-spreadsheet_format(worksheet, "A1", "B1")
-worksheet.update("A1", "Name")
-worksheet.update("B1", "Recipe")
-# manual updating
-worksheet.update("A2:B22",
-                             [[meals[0], recipe[0]], [meals[1], recipe[1]], [meals[2], recipe[2]],
-                              [meals[3], recipe[3]], [meals[4], recipe[4]], [meals[5], recipe[5]],
-                              [meals[6], recipe[6]], [meals[7], recipe[7]], [meals[8], recipe[8]],
-                              [meals[9], recipe[9]], [meals[10], recipe[10]], [meals[11], recipe[11]],
-                              [meals[12], recipe[12]], [meals[13], recipe[13]], [meals[14], recipe[14]],
-                              [meals[15], recipe[15]], [meals[16], recipe[16]], [meals[17], recipe[17]],
-                              [meals[18], recipe[18]], [meals[19], recipe[19]], [meals[20], recipe[20]]])
+worksheet = select_spreadsheet(filename="project 1202", s_name="Sheet1")
+spreadsheet_format(worksheet, "A1", "C1")
+worksheet.clear()
+worksheet.update("A1", "Company Name")
+worksheet.update("B1", "Company Link")
+worksheet.update("B1", "Company LinkedIn")
 
-# # Automated updating
 num = 1
-for linked in recipe:
-    driver.get(linked)
+linked = []
+links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
+for link in links:
+    linked.append(link.get_attribute('href'))
+for links in linked:
     num += 1
-    recipe_link = linked
-    worksheet.update(f'B{num}', recipe_link)
-    logging.info("Worksheet updated")
-    meal = driver.find_element(By.TAG_NAME, value="h1").text
-    worksheet.update(f'A{num}', meal)
-    logging.info("Worksheet updated")
+    driver.get(links)
+    company_name = None
+    while not company_name:
+        try:
+            txt = driver.find_element(By.TAG_NAME, value='h1')
+            company_name = txt.text
+        except NoSuchElementException:
+            company_name = "None"
+    print(company_name)
+    company_link = None
+    while not company_link:
+        try:
+            linke = driver.find_element(By.XPATH, value='/html/body/main/div[1]/div/section[1]/div/div[1]'
+                                                        '/div/div[2]/a')
+            company_link = linke.get_attribute('href')
+        except NoSuchElementException:
+            company_link = "None"
+    print(company_link)
+
+    linkedin = None
+    while not linkedin:
+        try:
+            texts = driver.find_element(By.CSS_SELECTOR, value='.company-details-socials a')
+            linkedin = texts.get_attribute('href')
+        except NoSuchElementException:
+            linkedin = "None"
+    print(linkedin)
+
+    worksheet.update(f"A{num}", company_name)
+    worksheet.update(f"B{num}", company_link)
+    worksheet.update(f"C{num}", linkedin)
+
