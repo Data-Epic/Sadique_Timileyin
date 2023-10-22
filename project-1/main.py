@@ -92,7 +92,6 @@ for links in linked:
             company_name = txt.text
         except NoSuchElementException:
             company_name = "None"
-    print(company_name)
     company_link = None
     while not company_link:
         try:
@@ -101,8 +100,6 @@ for links in linked:
             company_link = linke.get_attribute('href')
         except NoSuchElementException:
             company_link = "None"
-    print(company_link)
-
     linkedin = None
     while not linkedin:
         try:
@@ -110,7 +107,6 @@ for links in linked:
             linkedin = texts.get_attribute('href')
         except NoSuchElementException:
             linkedin = "None"
-    print(linkedin)
 
     worksheet.update(f"A{num}", company_name)
     worksheet.update(f"B{num}", company_link)
