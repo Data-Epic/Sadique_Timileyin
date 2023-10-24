@@ -1,4 +1,7 @@
+import inspect
 import logging
+import types
+
 import gspread
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -15,45 +18,62 @@ driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())
 link = "https://www.lusha.com/company-search/accounting/10/canada/193/page/2/"
 driver.get(url=link)
 
-gc = gspread.service_account("sadique_timileyin/project-1/my-project.json")
+gc = gspread.service_account("/Users/mac/PycharmProjects/pythonProject/sadique_timileyin/project-1/my-project.json")
 
 
 def open_spreadsheet(sheet_name):
     """
     This opens a spreadsheet already created on Google sheet
     """
-    sh = gc.open(sheet_name)
-    logging.info("spreadsheet opened")
-    return sh
+    if isinstance(sheet_name, str):
+        sh = gc.open(sheet_name)
+        logging.info("spreadsheet opened")
+        return sh
+    else:
+        raise ValueError("The sheet name expected a string object")
 
 
 def create_spreadsheet(sheet_name):
     """
     This creates a new spreadsheet file in google sheet
     """
-    sh = gc.create(sheet_name)
-    logging.info("Spreadsheet created")
-    return sh
+    if isinstance(sheet_name, str):
+        sh = gc.create(sheet_name)
+        logging.info("Spreadsheet created")
+        return sh
+    else:
+        raise ValueError("The sheet name expected a string object")
 
 
 def select_spreadsheet(filename, s_name):
     """
     This function  selects the preferred worksheet
-    :param filename:
+    :param filename: This is the name of the spreadsheet
     :param s_name: This is the name of the desired worksheet in str format
     """
-    worksheets = open_spreadsheet(filename).worksheet(s_name)
-    return worksheets
+    if isinstance(s_name, str) and isinstance(filename, str):
+        worksheets = open_spreadsheet(filename).worksheet(s_name)
+        logging.info(f"Worksheet {s_name} has been loaded")
+        return worksheets
+    else:
+        raise ValueError("The input expected a string object")
 
 
-def spreadsheet_format(worksheets, col1, col2):
+def spreadsheet_format(filename, s_name, col1, col2):
     """
     This functon is for the formatting of the spreadsheet
-    :param worksheets: This  accepts a function
+    :param s_name: Name of current worksheet
+    :param filename: Name of spreadsheet
     :param col1: This is the name of the start column in the range in str format
     :param col2: This is the name of the end column in the range in str format
     """
-    worksheets.format(f"{col1}:{col2}", {'textFormat': {'bold': True}})
+    if isinstance(col1, str) and isinstance(col2, str) and isinstance(filename, str) and isinstance(s_name, str):
+        formats = select_spreadsheet(filename, s_name).format(f"{col1}:{col2}", {'textFormat': {'bold': True}})
+        logging.info("Format set")
+        return formats
+    else:
+        raise ValueError("The input expected a string object e.g 'A1' for the cols and rows input."
+                        "Wrong input expected a string object.")
 
 
 def new_worksheet(filename, new_name, rows, cols):
@@ -61,54 +81,64 @@ def new_worksheet(filename, new_name, rows, cols):
     This function creates a new worksheet within the spreadsheet.
     :param filename: This is the name of the spreadsheet file
     :param new_name: Name of  the new worksheet
-    :param rows: Numbers of desired rows
-    :param cols: Numbers of desired columns
-    :return: A new worksheet
+    :param rows: Number of desired rows
+    :param cols: Number of desired columns
     """
-    open_spreadsheet(filename).add_worksheet(new_name, rows, cols)
-    logging.info("Worksheet created")
+    if filename not in open_spreadsheet(filename).worksheets():
+        if isinstance(rows, int) and isinstance(cols, int) and isinstance(filename, str) and isinstance(new_name, str):
+            open_spreadsheet(filename).add_worksheet(new_name, rows, cols)
+            logging.info("Worksheet created")
+        else:
+            raise ValueError("The input expected a number/integer for the "
+                             "rows ands cols input, other inputs are strings")
+    else:
+        # raise FileExistsError("This file already exists")
+        print("Does not xist")
 
-
-open_spreadsheet("project 1202")
-worksheet = select_spreadsheet(filename="project 1202", s_name="Sheet1")
-spreadsheet_format(worksheet, "A1", "C1")
-worksheet.clear()
-worksheet.update("A1", "Company Name")
-worksheet.update("B1", "Company Link")
-worksheet.update("B1", "Company LinkedIn")
-
-num = 1
-linked = []
-links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
-for link in links:
-    linked.append(link.get_attribute('href'))
-for links in linked:
-    num += 1
-    driver.get(links)
-    company_name = None
-    while not company_name:
-        try:
-            txt = driver.find_element(By.TAG_NAME, value='h1')
-            company_name = txt.text
-        except NoSuchElementException:
-            company_name = "None"
-    company_link = None
-    while not company_link:
-        try:
-            linke = driver.find_element(By.XPATH, value='/html/body/main/div[1]/div/section[1]/div/div[1]'
-                                                        '/div/div[2]/a')
-            company_link = linke.get_attribute('href')
-        except NoSuchElementException:
-            company_link = "None"
-    linkedin = None
-    while not linkedin:
-        try:
-            texts = driver.find_element(By.CSS_SELECTOR, value='.company-details-socials a')
-            linkedin = texts.get_attribute('href')
-        except NoSuchElementException:
-            linkedin = "None"
-
-    worksheet.update(f"A{num}", company_name)
-    worksheet.update(f"B{num}", company_link)
-    worksheet.update(f"C{num}", linkedin)
-
+main_t = open_spreadsheet("project 1202")
+my = open_spreadsheet("project 1202").worksheets()
+for name in my:
+    print('sheetName: {}'.format())
+# new_worksheet("project 1202", "Companies", 100, 3)
+# worksheet = select_spreadsheet("project 1202", "Sheet1")
+# spreadsheet_format("project 1202", "Sheet1", "A1", "C1")
+# worksheet.clear()
+# worksheet.update("A1", "Company Name")
+# worksheet.update("B1", "Company Link")
+# worksheet.update("C1", "Company LinkedIn")
+#
+# num = 1
+# linked = []
+# links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
+# for link in links:
+#     linked.append(link.get_attribute('href'))
+# for links in linked[1:3]:
+#     num += 1
+#     driver.get(links)
+#     company_name = None
+#     while not company_name:
+#         try:
+#             txt = driver.find_element(By.TAG_NAME, value='h1')
+#             company_name = txt.text
+#         except NoSuchElementException:
+#             company_name = "None"
+#     company_link = None
+#     while not company_link:
+#         try:
+#             linke = driver.find_element(By.XPATH, value='/html/body/main/div[1]/div/section[1]/div/div[1]'
+#                                                         '/div/div[2]/a')
+#             company_link = linke.get_attribute('href')
+#         except NoSuchElementException:
+#             company_link = "None"
+#     linkedin = None
+#     while not linkedin:
+#         try:
+#             texts = driver.find_element(By.CSS_SELECTOR, value='.company-details-socials a')
+#             linkedin = texts.get_attribute('href')
+#         except NoSuchElementException:
+#             linkedin = "None"
+#
+#     worksheet.update(f"A{num}", company_name)
+#     worksheet.update(f"B{num}", company_link)
+#     worksheet.update(f"C{num}", linkedin)
+#
