@@ -18,7 +18,7 @@ driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())
 link = "https://www.lusha.com/company-search/accounting/10/canada/193/page/2/"
 driver.get(url=link)
 
-gc = gspread.service_account("/Users/mac/PycharmProjects/pythonProject/sadique_timileyin/project-1/my-project.json")
+gc = gspread.service_account("/sadique_timileyin/project-1_test/my-project.json")
 
 
 def open_spreadsheet(sheet_name):
