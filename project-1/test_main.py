@@ -65,14 +65,17 @@ def test_format_three():
 
 
 def test_new_sheet_one():
-    assert new_worksheet("project 1202", "Companies", 100, 3)
+    with pytest.raises(FileExistsError, match="This worksheet already exists"):
+        assert new_worksheet("project 1202", "Companies", 100, 3)
 
 
 def test_new_sheet_two():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The input expected a number/integer for the "
+                                         "rows ands cols input, other inputs are strings"):
         assert new_worksheet("project 1202", True, 100, 3)
 
 
 def test_new_sheet_three():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The input expected a number/integer for the "
+                                         "rows ands cols input, other inputs are strings"):
         assert new_worksheet(False, True, float, 3)
