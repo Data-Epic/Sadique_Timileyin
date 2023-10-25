@@ -10,23 +10,22 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 import os, json
 from dotenv import load_dotenv
+
 load_dotenv()
 KEY = os.getenv("PROJECT_1202")
 
 link = "https://www.lusha.com/company-search/accounting/10/canada/193/page/2/"
 
 
-def chrome_driver(webpage):
-    if isinstance(webpage, str):
-        option = webdriver.ChromeOptions()
-        option.add_argument('--headless')
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=option)
-        driver.get(webpage)
-    else:
-        raise ValueError("Expected a webpage link")
+def chrome_driver():
+    option = webdriver.ChromeOptions()
+    option.add_argument('--headless')
+    drivers = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=option)
+    return drivers
 
 
-gc = gspread.service_account("/Users/mac/PycharmProjects/pythonProject/sadique_timileyin/project-1_test/my-project.json")
+gc = gspread.service_account(
+    "/Users/mac/PycharmProjects/pythonProject/sadique_timileyin/project-1_test/my-project.json")
 
 
 def open_spreadsheet(sheet_name):
@@ -67,23 +66,23 @@ def select_spreadsheet(filename, sheet_name):
         raise ValueError("The input expected a string object")
 
 
-def spreadsheet_format(filename, sheetname, first_column, second_column):
+def spreadsheet_format(filename, sheet_name, first_column, second_column):
     """
     This functon is for the formatting of the spreadsheet
-    :param sheetname: Name of current worksheet
+    :param sheet_name: Name of current worksheet
     :param filename: Name of spreadsheet
     :param first_column: This is the name of the start column in the range in str format
     :param second_column: This is the name of the end column in the range in str format
     """
-    if (isinstance(filename, str) and isinstance(sheetname, str)
+    if (isinstance(filename, str) and isinstance(sheet_name, str)
             and isinstance(first_column, str) and isinstance(second_column, str)):
-        formats = (select_spreadsheet(filename, sheetname).format
+        formats = (select_spreadsheet(filename, sheet_name).format
                    (f"{first_column}:{second_column}", {'textFormat': {'bold': True}}))
         logging.info("Worksheet columns format has been set")
         return formats
     else:
         raise ValueError("The input expected a string object e.g 'A1' for the cols and rows input."
-                        "Wrong input expected a string object.")
+                         "Wrong input expected a string object.")
 
 
 def new_worksheet(filename, new_name, rows, columns):
@@ -109,11 +108,10 @@ def new_worksheet(filename, new_name, rows, columns):
                          "rows ands cols input, other inputs are strings")
 
 
-chrome_driver(link)
+driver = chrome_driver()
+driver.get(link)
 open_spreadsheet("project 1202")
 worksheet = select_spreadsheet("project 1202", "Sheet1")
-worksheet.update("A2", "Sadique")
-new_worksheet("project 1202", "Recorded", 100, 10)
 spreadsheet_format("project 1202", "Sheet1", "A1", "C1")
 worksheet.clear()
 worksheet.update("A1", "Company Name")
@@ -125,7 +123,7 @@ linked = []
 links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
 for link in links:
     linked.append(link.get_attribute('href'))
-for links in linked[1:3]:
+for links in linked:
     num += 1
     driver.get(links)
     company_name = None
@@ -154,4 +152,3 @@ for links in linked[1:3]:
     worksheet.update(f"A{num}", company_name)
     worksheet.update(f"B{num}", company_link)
     worksheet.update(f"C{num}", linkedin)
-
