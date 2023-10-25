@@ -113,45 +113,45 @@ chrome_driver(link)
 open_spreadsheet("project 1202")
 worksheet = select_spreadsheet("project 1202", "Sheet1")
 worksheet.update("A2", "Sadique")
-# new_worksheet("project 1202", "Recorded", 100, 10)
-# spreadsheet_format("project 1202", "Sheet1", "A1", "C1")
-# worksheet.clear()
-# worksheet.update("A1", "Company Name")
-# worksheet.update("B1", "Company Link")
-# worksheet.update("C1", "Company LinkedIn")
-#
-# num = 1
-# linked = []
-# links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
-# for link in links:
-#     linked.append(link.get_attribute('href'))
-# for links in linked[1:3]:
-#     num += 1
-#     driver.get(links)
-#     company_name = None
-#     while not company_name:
-#         try:
-#             txt = driver.find_element(By.TAG_NAME, value='h1')
-#             company_name = txt.text
-#         except NoSuchElementException:
-#             company_name = "None"
-#     company_link = None
-#     while not company_link:
-#         try:
-#             linke = driver.find_element(By.XPATH, value='/html/body/main/div[1]/div/section[1]/div/div[1]'
-#                                                         '/div/div[2]/a')
-#             company_link = linke.get_attribute('href')
-#         except NoSuchElementException:
-#             company_link = "None"
-#     linkedin = None
-#     while not linkedin:
-#         try:
-#             texts = driver.find_element(By.CSS_SELECTOR, value='.company-details-socials a')
-#             linkedin = texts.get_attribute('href')
-#         except NoSuchElementException:
-#             linkedin = "None"
-#
-#     worksheet.update(f"A{num}", company_name)
-#     worksheet.update(f"B{num}", company_link)
-#     worksheet.update(f"C{num}", linkedin)
-#
+new_worksheet("project 1202", "Recorded", 100, 10)
+spreadsheet_format("project 1202", "Sheet1", "A1", "C1")
+worksheet.clear()
+worksheet.update("A1", "Company Name")
+worksheet.update("B1", "Company Link")
+worksheet.update("C1", "Company LinkedIn")
+
+num = 1
+linked = []
+links = driver.find_elements(By.CSS_SELECTOR, value='.directory-content-box-inner a')
+for link in links:
+    linked.append(link.get_attribute('href'))
+for links in linked[1:3]:
+    num += 1
+    driver.get(links)
+    company_name = None
+    while not company_name:
+        try:
+            txt = driver.find_element(By.TAG_NAME, value='h1')
+            company_name = txt.text
+        except NoSuchElementException:
+            company_name = "None"
+    company_link = None
+    while not company_link:
+        try:
+            linke = driver.find_element(By.XPATH, value='/html/body/main/div[1]/div/section[1]/div/div[1]'
+                                                        '/div/div[2]/a')
+            company_link = linke.get_attribute('href')
+        except NoSuchElementException:
+            company_link = "None"
+    linkedin = None
+    while not linkedin:
+        try:
+            texts = driver.find_element(By.CSS_SELECTOR, value='.company-details-socials a')
+            linkedin = texts.get_attribute('href')
+        except NoSuchElementException:
+            linkedin = "None"
+
+    worksheet.update(f"A{num}", company_name)
+    worksheet.update(f"B{num}", company_link)
+    worksheet.update(f"C{num}", linkedin)
+
