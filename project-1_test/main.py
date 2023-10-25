@@ -1,7 +1,4 @@
-import inspect
 import logging
-import types
-
 import gspread
 from selenium import webdriver
 from selenium.webdriver.common.by import By
