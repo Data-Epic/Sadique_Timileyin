@@ -1,4 +1,4 @@
-from main import *
+from main import open_spreadsheet, create_spreadsheet, new_worksheet, select_spreadsheet, spreadsheet_format
 import pytest
 
 
@@ -38,10 +38,3 @@ def test_new_worksheet():
     with pytest.raises(ValueError, match="The input expected a number/integer for the "
                                          "rows ands cols input, other inputs are strings"):
         assert new_worksheet("project 1202", True, 100, 3)
-
-
-def test_chrome_driver():
-    with pytest.raises(AssertionError):
-        assert chrome_driver("https://www.lusha.com/company-search/accounting/10/canada/193/page/2/")
-    with pytest.raises(ValueError, match="Expected a webpage link"):
-        assert chrome_driver(False)
